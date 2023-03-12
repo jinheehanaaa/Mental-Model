@@ -1,4 +1,5 @@
-#
+
+
 
 <details> <!-- OBJECTIVE -->
 <summary>Objective</summary>
@@ -7,7 +8,8 @@
 
 </details>
 
-<details> <!-- START of 002 -->
+<!-- ########## START of 002 ########## -->
+<details>
 <summary>002 - Backend Communication Design Patterns</summary>
 
 <!-- ##### START OF TOPIC: Request-Response ##### -->
@@ -395,7 +397,284 @@
 
 
 
-</details> <!-- END OF 002 -->
+</details>
+<!-- ########## END of 002 ########## -->
+
+
+
+<!-- ########## START of 003 ########## -->
+<details>
+<summary>002 - Backend Communication Design Patterns</summary>
+
+<!-- ##### START OF TOPIC: PROTOCOL PROPERTIES ##### -->
+<details>
+<summary>Protocol Properties</summary>
+
+# What is a protocol?
+- A system that allows two parties to communicate
+- A protocol is designed with a set of perperties
+- Depending on the purpose of the protocol
+- TCP, UDP, HTTP, gRPC, FTP
+
+# Protocol properties
+- Data format
+- - Text based (plain text, JSON, XML)
+- - Binary (protobuf, RESP, http2, http3)
+- Transfer mode
+- - Message based (UDP, HTTP)
+- - Stream (TCP, WebRTC)
+- Addressing system
+- - DNS name, IP, MAC
+- DIrectionality
+- - Bidirectional (TCP)
+- - Unidirectional (HTTP)
+- - Full/Half duplex
+- State
+- - Stateful (TCP, gRPC, apache thrift)
+- - Stateless (UDP, HTTP)
+- Routing
+- - Proxies, Gateways
+- Flow & Congestion control
+- - TCP (Flow & Congestion)
+- - UDP (No control)
+- Error management
+- - Error code
+- - Retries and timeouts
+
+</details>
+<!-- ##### END OF TOPIC: PROTOCOL PROPERTIES ##### -->
+
+
+<!-- ##### START OF TOPIC: OSI MODEL ##### -->
+<details>
+<summary>OSI MODEL</summary>
+
+- Open Systems Interconnection model
+
+# Why do we need a communication model?
+- Agnostic application
+- - Without a standard model, your application must have knowledge of the underlying network medium
+- - Imagine if you have to author different version of your apps so that it works on wifi vs ethernet vs LTE vs fiber
+- Network Equipment Management
+- - Without a standard model, upgrading network equipments becomes difficult
+- Decoupled Innovation
+- - Innovations can be done in each layer separately without affecting the rest of the models
+
+# What is the OSI Model?
+- 7 Layers each describe a specific networking component
+- Layer 7 - Application - HTTP/FTP/gRPC (Most of the time as a backend developer)
+- Layer 6 - Presentation - Encoding, Serialization
+- Layer 5 - Session - Connection establishment, TLS
+- Layer 4 - Transport - UDP/TCP (Most of the time as a backend developer)
+- Layer 3 - Network - IP
+- Layer 2 - Data link - Frames, Mac address Ethernet
+- Layer 1 - Physical - Electric signals, fiber or radio waves
+
+# THE OSI Layers - an Example (Sender)
+- Example sending a POST request to an HTTPS webpage
+- Layter 7 - Application
+- - POST request with JSON data to HTTPS server
+- Layer 6 - Presentation
+- - Serialize JSON to flat byte strings
+- Layer 5- Session
+- - Request to establish TCP connection/TLS
+- Layer 4 - Transport
+- - Sends SYN re4quest target port 443
+- Layer 3 - Network
+- - SYN is placed an IP packet(s) and adds the source/dest IPs
+- Layer 2 - Data link
+- - Each packet goes into a single frame and adds the source/dest MAC addresses
+- Layer 1 - Physical
+- - Each frame becomes string of bits which converted into either a radio signal (wifi), electric signal (ethernet), or light (fiber)
+
+# THE OSI Layers - an Example (Receiver)
+- Receiver computer receives the POST request the other way around
+- Layer 1 - Physical
+- - Radio, electric or light is received and converted into digital bits
+- Layer 2 - Data link
+- - The bits from Layer 1 is assembled into frames
+- Layer 3 - Network
+- - The frames from layer 2 are assembled into IP packet
+- Layer 4 - Transport
+- - The IP packets from layer 3 are assembled into TCP segments
+- - Deals with Congestion control/flow control/retransmission in case of TCP
+- - If sement is SYN we don't need to go further into more layers as we are still processing the connection request
+- Layer 5- Session
+- - The connection session is established or identified
+- - We only arrive at this layer when necessary (three way handshake is done)
+- Layer 6 - Presentation
+- - Deserialize flat byte strings back to JSON for the app to consume
+- Layter 7 - Application
+- - Application understands the JSON POST request and your express json or apache request receive event is triggered
+
+# Switch & Router
+## Switch
+- Re-transmit the data
+- Subnet
+- Mostly looks for 2 Layer (Physical, Data Link)
+## Router
+- Acts like a switch but need IP Addresses
+- Could have multiple routers
+
+# Content Delivery Network (CDN)
+## Client
+## Layer 4 Proxy, Firewall
+## Layer 7 Load Balancer/CDN
+- Way slower than firewall if you want use cache (You go all the way to layer 7)
+- Final destination to Client
+## Server
+
+# The shortcomings of the OSI Model
+- OSI Model has too many layers which can be hard to comprehend
+- Hard to argue about which layer does what
+- Simpler to deal with Layers 5-6-7 as just one layer, application
+- TCP/IP Model does just that
+
+# TCP/IP Model
+- Much simpler than OSI, just 4 layers
+- Application (Layer 5, 6, and 7)
+- Transport (Layer 4)
+- Internet (Layer 3)
+- Data link (Layer 2)
+- Physical layer is not officially covered in the model
+
+
+
+</details>
+<!-- ##### END OF TOPIC: OSI MODEL ##### -->
+
+
+<!-- ##### START OF TOPIC: INTERNET PROTOCOL ##### -->
+<details>
+<summary>Internet Protocol</summary>
+
+# 1. The IP building blocks
+- Understanding the IP Protocol
+
+## IP Address
+- Layer 3 property
+- Can be set automatically or statically
+- Network and Host portion
+- 4 bytes in IPv4 - 32 bits
+
+## Network vs Host
+- a.b.c.d/x (a.b.c.d are integers) x is the network bits and remains are host
+- Example 192.168.254.0/24
+- The first 24 bits (3 bytes ) are network the rest 8 are for host
+- This means we can have 2^24 (16777216) networks and each network has 2^8 (255) host
+- Also called a subnet
+
+## Subnet Mask
+- 192.168.254.0/24 is also called a subnet
+- The subnet has a mask 255.255.255.0
+- Subnet mask is used to determine whatever an IP is in the same subnet
+
+## Default Gateway
+- Most networks consists of hosts and a Default Gateway
+- When host A want to talk to B directly if both are in the same subnet
+- Otherwise A sends it to someone who might know, the gateway
+- The Gateway has an IP Address and each host should know its gateway
+
+# 2. The IP Packet
+- Anatomy of the IP Packet
+
+# IP Packet
+- The IP Packet has headers and data sections
+- IP Packet header is 20 bytes (can go up to 60 bytes if options are enabled)
+- Data section can go up to 65536 (Average is 1500 bytes)
+
+# 3. ICMP
+
+# ICMP
+- Stands for Internet Control Message Protocol
+- Designed for informationnal messages
+- - Host unreachable, port unreachable, fragmentation needed
+- - Packet expired (infinite loop in routers)
+- Uses IP directly
+- PING and traceroute use it
+- Doesn't require listeners or ports to be opened
+- Some firewalls block ICMP for security reasons
+- That is why PING might not work in those cases
+- Disabling ICMP also can cause real damage with connection establishment (TCP Blackhole)
+- - Fragmentation needed
+- PING demo
+
+# Ping
+
+# TraceRoute
+- Can you identify the entire path your IP Packet takes?
+- Clever use of TTL
+- Increment TTL slowly and  you will get the router IP address for each hop
+- Doesn't always work as path changes and ICMP might be blocked
+
+
+
+</details>
+<!-- ##### END OF TOPIC: INTERNET PROTOCOL ##### -->
+
+
+<!-- ##### START OF TOPIC: ##### -->
+<details>
+<summary>UDP</summary>
+
+- User Datagram Protocol
+
+# 1. UDP
+- Stands for User Datagram Protocol
+- Layer 4 protocol
+- Ability to address processes in a host using ports
+- Simple protocol to send and receive data
+- Prior communication not required (double edge sword)
+- Stateless no knowledge is stored on the host
+- 8 byte header Datagram
+
+# UDP Use cases
+- Video streaming
+- VPN
+- DNS
+- WebRTC
+
+# Multiplexing and demultiplexing
+- IP target hosts only
+- Hosts run many apps each with different requirements
+- Ports now identidy the "app" or "process"
+- Sender multiplexes all its apps into UDP
+- Receiver demultiplex UDP datagrams to each app
+
+# 2. UDP Datagram
+- The anatomy of the UDP datagram
+
+# UDP Datagram
+- UDP Header is 8 bytes only (IPv4)
+- Datagram slides into an IP packet as "data"
+- Port are 16 bit (0 to 65535)
+
+# UDP Pros and Cons
+## Pros
+- Simple protocol
+- Header size is small so datagrams are small
+- Uses less bandwidth
+- Stateless
+- Consumes less memory (no state stored in the server/client)
+- Low latency - no handshake, order, retransmission or guaranteed delivery
+
+## Cons
+- No acknowledgement
+- No guarantee delivery
+- Connection-less - anyone can send data without prior knowledge
+- No Flow control
+- No congestion control
+- No ordered packets
+- Security - can be easily spoofed
+
+</details>
+<!-- ##### END OF TOPIC: ##### -->
+
+
+
+
+</details>
+<!-- ########## END of 003 ########## -->
 
 
 <!-- ##### START OF TOPIC: ##### -->
@@ -408,7 +687,9 @@
 <!-- ##### END OF TOPIC: ##### -->
 
 
-</details> <!-- END OF 002 -->
+</details>
+
+<!-- ########## END OF 002 ########## -->
 
 
 # Resources

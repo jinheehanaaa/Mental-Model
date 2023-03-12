@@ -1,0 +1,15 @@
+{
+  "name": "mental-model",
+  "version": "1.0.0",
+  "description": "- Read book & Take online lecture for mental model development - Learn Software Architecture & Backend Engineering - Learn why something happens & trade-off",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dgram": "^1.0.1"
+  }
+}
